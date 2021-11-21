@@ -13,6 +13,7 @@
 import { Component, Vue } from "vue-property-decorator";
 import PokemonList from "@/modules/pokemon/PokemonList.vue";
 import PokemonSearch from "@/modules/pokemon/PokemonSearch.vue";
+
 @Component({
   components: { PokemonSearch, PokemonList },
 })

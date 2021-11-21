@@ -1,13 +1,13 @@
 import axios, { AxiosResponse } from "axios";
 
-/*const sleep = (timer: number) => {
+const sleep = (timer: number) => {
   return new Promise((resolve) => {
     setTimeout(resolve, timer);
   });
-};*/
+};
 
 axios.interceptors.response.use(async (response) => {
-  /*await sleep(1000);*/
+  await sleep(500);
   return response;
 });
 

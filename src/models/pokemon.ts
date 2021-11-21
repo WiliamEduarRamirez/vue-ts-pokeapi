@@ -5,6 +5,7 @@ export interface ResultPokemon {
 }
 
 export interface Pokemon {
+  id: number;
   name: string;
   sprites: Sprite;
 }

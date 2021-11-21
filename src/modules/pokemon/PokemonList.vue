@@ -1,12 +1,21 @@
 <template>
   <v-container>
     <v-row>
+      <v-col class="d-flex justify-end">
+        <pokemon-pagination
+          :loading="initialLoading"
+          @change-page="changePage"
+          :pagination="pagination"
+        ></pokemon-pagination>
+      </v-col>
+    </v-row>
+    <v-row>
       <template v-if="!initialLoading">
         <v-col v-for="(tempPokemon, index) in pokemons" :key="index" cols="4">
           <pokemon-card :temp-pokemon="tempPokemon"></pokemon-card>
         </v-col>
       </template>
-      <v-col v-else>
+      <v-col class="my-15" v-else>
         <custom-progress-circular></custom-progress-circular>
       </v-col>
     </v-row>
@@ -19,14 +28,17 @@ import pokemonServices from "@/services/pokemon-services";
 import { Pokemon } from "@/models/pokemon";
 import CustomProgressCircular from "@/common/CustomProgressCircular.vue";
 import PokemonCard from "@/modules/pokemon/PokemonCard.vue";
-import { PaginationParams } from "@/models/pagination";
+import { Pagination, PaginationParams } from "@/models/pagination";
+import PokemonPagination from "@/modules/pokemon/PokemonPagination.vue";
 @Component({
-  components: { PokemonCard, CustomProgressCircular },
+  components: { PokemonPagination, PokemonCard, CustomProgressCircular },
 })
 export default class PokemonList extends Vue {
   pokemons: Pokemon[] = [];
-  initialLoading = false;
-  paginationParams = new PaginationParams();
+  pagination = new Pagination();
+  initialLoading = true;
+  loading = false;
+  paginationParams = new PaginationParams(25);
 
   mounted(): void {
     this.listPokemon();
@@ -39,6 +51,13 @@ export default class PokemonList extends Vue {
     return params;
   }
 
+  changePage(val: number): void {
+    this.pagination.currentPage = val - 1;
+    this.paginationParams.offset =
+      this.paginationParams.limit * this.pagination.currentPage;
+    this.listPokemon();
+  }
+
   async listPokemon(): Promise<void> {
     this.initialLoading = true;
     try {
@@ -47,6 +66,11 @@ export default class PokemonList extends Vue {
         async ({ url }) => await pokemonServices.details(url)
       );
       this.pokemons = await Promise.all(arrPromises);
+      this.pagination.itemsPerPage = this.paginationParams.limit;
+      this.pagination.totalPages = Math.round(
+        response.count / this.paginationParams.limit
+      );
+      this.pagination.totalItems = response.count;
     } catch (e) {
       console.log(e);
     } finally {
