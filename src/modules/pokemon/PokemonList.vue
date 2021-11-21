@@ -27,9 +27,11 @@ import { Component, Vue } from "vue-property-decorator";
 import pokemonServices from "@/services/pokemon-services";
 import { Pokemon } from "@/models/pokemon";
 import CustomProgressCircular from "@/common/CustomProgressCircular.vue";
-import PokemonCard from "@/modules/pokemon/PokemonCard.vue";
+import PokemonCard from "@/common/PokemonCard.vue";
 import { Pagination, PaginationParams } from "@/models/pagination";
 import PokemonPagination from "@/modules/pokemon/PokemonPagination.vue";
+import { namespace } from "vuex-class";
+const pokemon = namespace("pokemon");
 @Component({
   components: { PokemonPagination, PokemonCard, CustomProgressCircular },
 })
@@ -51,6 +53,12 @@ export default class PokemonList extends Vue {
     return params;
   }
 
+  @pokemon.Getter
+  getPokemons!: Pokemon[];
+
+  @pokemon.Action
+  loadFavoritesPokemons!: () => void;
+
   changePage(val: number): void {
     this.pagination.currentPage = val - 1;
     this.paginationParams.offset =
@@ -61,10 +69,14 @@ export default class PokemonList extends Vue {
   async listPokemon(): Promise<void> {
     this.initialLoading = true;
     try {
+      this.loadFavoritesPokemons();
       const response = await pokemonServices.list(this.axiosParams);
-      const arrPromises = response.results.map(
-        async ({ url }) => await pokemonServices.details(url)
-      );
+      const arrPromises = response.results.map(async ({ url }) => {
+        const tempPokemon = await pokemonServices.details(url);
+        const exist = this.getPokemons.find((x) => x.id === tempPokemon.id);
+        tempPokemon.favorite = !!exist;
+        return tempPokemon;
+      });
       this.pokemons = await Promise.all(arrPromises);
       this.pagination.itemsPerPage = this.paginationParams.limit;
       this.pagination.totalPages = Math.round(

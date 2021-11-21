@@ -1,5 +1,5 @@
 <template>
-  <v-col class="mt-5">
+  <div class="mt-5">
     <v-text-field
       solo
       dense
@@ -8,7 +8,7 @@
       outlined
       label="Busca tu pokemon"
     ></v-text-field>
-  </v-col>
+  </div>
 </template>
 
 <script lang="ts">
