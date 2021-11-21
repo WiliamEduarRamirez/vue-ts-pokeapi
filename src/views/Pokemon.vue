@@ -1,10 +1,10 @@
 <template>
   <v-container>
     <v-row>
-      <v-col cols="6">
+      <v-col cols="12" sm="6" md="6">
         <pokemon-search></pokemon-search>
       </v-col>
-      <v-col cols="6">
+      <v-col cols="12" sm="6" md="6" class="text-center">
         <pokemon-favorites></pokemon-favorites>
       </v-col>
     </v-row>

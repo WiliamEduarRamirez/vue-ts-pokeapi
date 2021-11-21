@@ -5,7 +5,9 @@
         <v-col
           v-for="(tempPokemon, index) in getPokemons"
           :key="index"
-          cols="4"
+          cols="12"
+          sm="6"
+          md="4"
         >
           <pokemon-card :temp-pokemon="tempPokemon"></pokemon-card>
         </v-col>

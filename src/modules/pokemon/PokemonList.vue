@@ -11,7 +11,13 @@
     </v-row>
     <v-row>
       <template v-if="!initialLoading">
-        <v-col v-for="(tempPokemon, index) in pokemons" :key="index" cols="4">
+        <v-col
+          v-for="(tempPokemon, index) in pokemons"
+          :key="index"
+          cols="12"
+          sm="6"
+          md="4"
+        >
           <pokemon-card :temp-pokemon="tempPokemon"></pokemon-card>
         </v-col>
       </template>
